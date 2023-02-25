@@ -38,8 +38,11 @@ def hinge_loss_single(feature_vector, label, theta, theta_0):
         the hinge loss, as a float, associated with the given data point and
         parameters.
     """
-    # Your code here
-    raise NotImplementedError
+    # Loss (z) = 0 if z >= 1, (1 - z) otherwise
+    # z = y * (θ * x + θ_0)
+    z = label * (np.dot(feature_vector,theta) + theta_0)
+    loss = (1 - z) if z < 1 else 0
+    return loss
 
 
 
@@ -96,8 +99,14 @@ def perceptron_single_step_update(
         the updated feature-coefficient parameter `theta` as a numpy array
         the updated offset parameter `theta_0` as a floating point number
     """
-    # Your code here
-    raise NotImplementedError
+    epsilon = 0.00001
+    theta = current_theta
+    theta_0 = current_theta_0
+    perceptron = label * (np.dot(feature_vector, theta) + theta_0)
+    if perceptron <= epsilon:
+        theta = theta + label * feature_vector
+        theta_0 = theta_0 + label
+    return (theta, theta_0)
 
 
 
@@ -123,14 +132,16 @@ def perceptron(feature_matrix, labels, T):
         the offset parameter `theta_0` as a floating point number
             (found also after T iterations through the feature matrix).
     """
-    # Your code here
-    raise NotImplementedError
+    dimension = feature_matrix[0].shape[0]
+    theta, theta_0 = np.zeros((dimension,),np.float64), 0
     for t in range(T):
-        for i in get_order(nsamples):
-            # Your code here
-            raise NotImplementedError
-    # Your code here
-    raise NotImplementedError
+        for i in get_order(feature_matrix.shape[0]):
+            perceptron_i = perceptron_single_step_update(feature_matrix[i], 
+                                          labels[i], 
+                                          theta, 
+                                          theta_0)
+            theta, theta_0 = perceptron_i[0], perceptron_i[1]
+    return (theta, theta_0)
 
 
 
@@ -160,8 +171,20 @@ def average_perceptron(feature_matrix, labels, T):
         the average offset parameter `theta_0` as a floating point number
             (averaged also over T iterations through the feature matrix).
     """
-    # Your code here
-    raise NotImplementedError
+    dimension = feature_matrix[0].shape[0]
+    theta, theta_0 = np.zeros((dimension,),np.float64), 0
+    acum_theta, acum_theta_0, acum_count = np.zeros((dimension,),np.float64), 0, 0
+    for t in range(T):
+        for i in get_order(feature_matrix.shape[0]):
+            perceptron_i = perceptron_single_step_update(feature_matrix[i], 
+                                          labels[i], 
+                                          theta, 
+                                          theta_0)
+            theta, theta_0 = perceptron_i[0], perceptron_i[1]
+            acum_theta += theta
+            acum_theta_0 += theta_0
+            acum_count += 1
+    return (acum_theta / acum_count, acum_theta_0 / acum_count)
 
 
 def pegasos_single_step_update(
