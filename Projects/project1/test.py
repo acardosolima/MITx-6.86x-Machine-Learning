@@ -49,10 +49,10 @@ def check_tuple(ex_name, f, exp_res, *args, **kwargs):
     except NotImplementedError:
         log(red("FAIL"), ex_name, ": not implemented")
         return True
-    if not type(res) == tuple:
+    if type(res) != tuple:
         log(red("FAIL"), ex_name, ": does not return a tuple, type: ", type(res))
         return True
-    if not len(res) == len(exp_res):
+    if len(res) != len(exp_res):
         log(red("FAIL"), ex_name, ": expected a tuple of size ", len(exp_res), " but got tuple of size", len(res))
         return True
     if not all(equals(x, y) for x, y in zip(res, exp_res)):
@@ -65,10 +65,10 @@ def check_array(ex_name, f, exp_res, *args):
     except NotImplementedError:
         log(red("FAIL"), ex_name, ": not implemented")
         return True
-    if not type(res) == np.ndarray:
+    if type(res) != np.ndarray:
         log(red("FAIL"), ex_name, ": does not return a numpy array, type: ", type(res))
         return True
-    if not len(res) == len(exp_res):
+    if len(res) != len(exp_res):
         log(red("FAIL"), ex_name, ": expected an array of shape ", exp_res.shape, " but got array of shape", res.shape)
         return True
     if not all(equals(x, y) for x, y in zip(res, exp_res)):
@@ -81,10 +81,10 @@ def check_list(ex_name, f, exp_res, *args):
     except NotImplementedError:
         log(red("FAIL"), ex_name, ": not implemented")
         return True
-    if not type(res) == list:
+    if type(res) != list:
         log(red("FAIL"), ex_name, ": does not return a list, type: ", type(res))
         return True
-    if not len(res) == len(exp_res):
+    if len(res) != len(exp_res):
         log(red("FAIL"), ex_name, ": expected a list of size ", len(exp_res), " but got list of size", len(res))
         return True
     if not all(equals(x, y) for x, y in zip(res, exp_res)):
@@ -376,13 +376,13 @@ def check_bag_of_words():
     except NotImplementedError:
         log(red("FAIL"), ex_name, ": not implemented")
         return
-    if not type(res) == dict:
+    if type(res) != dict:
         log(red("FAIL"), ex_name, ": does not return a tuple, type: ", type(res))
         return
 
     vals = sorted(res.values())
     exp_vals = list(range(len(res.keys())))
-    if not vals == exp_vals:
+    if vals != exp_vals:
         log(red("FAIL"), ex_name, ": wrong set of indices. Expected: ", exp_vals, " got ", vals)
         return
 
@@ -421,10 +421,10 @@ def check_extract_bow_feature_vectors():
         log(red("FAIL"), ex_name, ": not implemented")
         return
 
-    if not type(res) == np.ndarray:
+    if type(res) != np.ndarray:
         log(red("FAIL"), ex_name, ": does not return a numpy array, type: ", type(res))
         return
-    if not len(res) == len(exp_res):
+    if len(res) != len(exp_res):
         log(red("FAIL"), ex_name, ": expected an array of shape ", exp_res.shape, " but got array of shape", res.shape)
         return
 
@@ -436,7 +436,6 @@ def check_extract_bow_feature_vectors():
         log(green("PASS"), ex_name, ": correct non binary features")
     else:
         log(red("FAIL"), ex_name, ": unexpected feature matrix")
-        return
 
 def main():
     log(green("PASS"), "Import project1")
