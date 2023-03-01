@@ -214,7 +214,7 @@ def pegasos_single_step_update(
         real valued number with the value of theta_0 after the old updated has
         completed.
     """
-    epsilon = 1.00001
+    epsilon = 1.0
     pegasos = label * (np.dot(feature_vector, theta) + theta_0)
     if pegasos <= epsilon:
         theta = (1- eta * L) * theta + eta * np.dot(label,feature_vector)
@@ -301,8 +301,18 @@ def classify(feature_matrix, theta, theta_0):
         given theta and theta_0. If a prediction is GREATER THAN zero, it
         should be considered a positive classification.
     """
-    # Your code here
-    raise NotImplementedError
+    # Implementing perceptron here
+    epsilon = 0.00001
+    # perceptron = np.zeros((dimension,))
+    perceptron = np.array([])
+
+    # for i in get_order(feature_matrix.shape[0]):
+    for i in range(feature_matrix.shape[0]):
+        result = np.dot(feature_matrix[i], theta) + theta_0
+        result2 = -1 if result <= 0 else 1
+        perceptron = np.append(perceptron, result2)
+        # perceptron[i] = -1 if result <= epsilon else 1
+    return perceptron
 
 
 def classifier_accuracy(
@@ -338,8 +348,12 @@ def classifier_accuracy(
         trained classifier on the training data and the second element is the
         accuracy of the trained classifier on the validation data.
     """
-    # Your code here
-    raise NotImplementedError
+    theta, theta_0 = classifier(train_feature_matrix, train_labels, **kwargs)
+    class_train = classify(train_feature_matrix, theta, theta_0)
+    train_accuracy = (class_train == train_labels).mean()
+    class_validation = classify(val_feature_matrix, theta, theta_0)
+    validation_accuracy = (class_validation == val_labels).mean()
+    return train_accuracy, validation_accuracy
 
 
 
@@ -369,9 +383,7 @@ def bag_of_words(texts, remove_stopword=False):
         a dictionary that maps each word appearing in `texts` to a unique
         integer `index`.
     """
-    # Your code here
-    raise NotImplementedError
-
+    stopword = []
     indices_by_word = {}  # maps word to unique index
     for text in texts:
         word_list = extract_words(text)
@@ -384,7 +396,7 @@ def bag_of_words(texts, remove_stopword=False):
 
 
 
-def extract_bow_feature_vectors(reviews, indices_by_word, binarize=True):
+def extract_bow_feature_vectors(reviews, indices_by_word, binarize=False):
     """
     Args:
         `reviews` - a list of natural language strings
@@ -394,18 +406,15 @@ def extract_bow_feature_vectors(reviews, indices_by_word, binarize=True):
         matrix thus has shape (n, m), where n counts reviews and m counts words
         in the dictionary.
     """
-    # Your code here
-    raise NotImplementedError
-
     feature_matrix = np.zeros([len(reviews), len(indices_by_word)], dtype=np.float64)
     for i, text in enumerate(reviews):
         word_list = extract_words(text)
         for word in word_list:
             if word not in indices_by_word: continue
-            feature_matrix[i, indices_by_word[word]] += 1
+            feature_matrix[i, indices_by_word[word]] = 1
     if binarize:
         # Your code here
-        raise NotImplementedErrort
+        raise NotImplementedError
     return feature_matrix
 
 
