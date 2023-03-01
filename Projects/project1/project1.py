@@ -411,7 +411,7 @@ def extract_bow_feature_vectors(reviews, indices_by_word, binarize=False):
         word_list = extract_words(text)
         for word in word_list:
             if word not in indices_by_word: continue
-            feature_matrix[i, indices_by_word[word]] = 1
+            feature_matrix[i, indices_by_word[word]] += 1
     if binarize:
         # Your code here
         raise NotImplementedError
