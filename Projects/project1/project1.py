@@ -214,8 +214,14 @@ def pegasos_single_step_update(
         real valued number with the value of theta_0 after the old updated has
         completed.
     """
-    # Your code here
-    raise NotImplementedError
+    epsilon = 1.00001
+    pegasos = label * (np.dot(feature_vector, theta) + theta_0)
+    if pegasos <= epsilon:
+        theta = (1- eta * L) * theta + eta * np.dot(label,feature_vector)
+        theta_0 = theta_0 + label * eta
+    else:
+        theta = (1 - eta * L) * theta
+    return (theta, theta_0)
 
 
 
@@ -236,7 +242,7 @@ def pegasos(feature_matrix, labels, T, L):
             correct classification of the kth row of the feature matrix.
         `T` - An integer indicating how many times the algorithm
             should iterate through the feature matrix.
-        `L` - The lamba value being used to update the Pegasos
+        `L` - The lambda value being used to update the Pegasos
             algorithm parameters.
 
     Returns:
@@ -246,8 +252,20 @@ def pegasos(feature_matrix, labels, T, L):
         the value of the theta_0, the offset classification parameter, found
         after T iterations through the feature matrix.
     """
-    # Your code here
-    raise NotImplementedError
+    dimension = feature_matrix[0].shape[0]
+    theta, theta_0 = np.zeros((dimension,),np.float64), 0
+    counter = 1
+    for t in range(1, T + 1):
+        for i in get_order(feature_matrix.shape[0]):
+            pegasos_i = pegasos_single_step_update(feature_matrix[i], 
+                                          labels[i], 
+                                          L,
+                                          counter**(-0.5), # 1/sqrt(t)
+                                          theta, 
+                                          theta_0)
+            theta, theta_0 = pegasos_i[0], pegasos_i[1]
+            counter += 1
+    return (theta, theta_0)
 
 
 

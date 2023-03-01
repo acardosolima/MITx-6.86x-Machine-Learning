@@ -275,6 +275,17 @@ def check_pegasos_single_update():
             exp_res,
             feature_vector, label, L, eta, theta, theta_0):
         return
+    
+    feature_vector = np.array([1, 2])
+    label, theta, theta_0 = 1, np.array([0, 0]), 0
+    L = 0.2
+    eta = 1
+    exp_res = (np.array([1, 2]), 1)
+    if check_tuple(
+            ex_name, p1.pegasos_single_step_update,
+            exp_res,
+            feature_vector, label, L, eta, theta, theta_0):
+        return
 
     log(green("PASS"), ex_name, "")
 
@@ -296,7 +307,7 @@ def check_pegasos():
     labels = np.array([1, 1])
     T = 1
     L = 1
-    exp_res = (np.array([1-1/np.sqrt(2), 1-1/np.sqrt(2)]), 1)
+    exp_res = (np.array([1-1/np.sqrt(2), 1-1/np.sqrt(2)]), 1.0)
     if check_tuple(
             ex_name, p1.pegasos,
             exp_res, feature_matrix, labels, T, L):
