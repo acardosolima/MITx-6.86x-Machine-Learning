@@ -383,7 +383,7 @@ def bag_of_words(texts, remove_stopword=False):
         a dictionary that maps each word appearing in `texts` to a unique
         integer `index`.
     """
-    stopword = []
+    stopword = [line.rstrip('\n') for line in open("stopwords.txt")]
     indices_by_word = {}  # maps word to unique index
     for text in texts:
         word_list = extract_words(text)
