@@ -17,7 +17,18 @@ def estep(X: np.ndarray, mixture: GaussianMixture) -> Tuple[np.ndarray, float]:
             for all components for all examples
         float: log-likelihood of the assignment
     """
-    raise NotImplementedError
+    n = X.shape[0] 
+    mu = mixture[0]  
+    var = mixture[1]
+    p = mixture[2]
+    d = X.shape[1] 
+    normal_dist = np.exp(np.linalg.norm(X[:, np.newaxis] - mu, axis = 2) ** 2 / -(2 * var)) * (2 * np.pi * var) ** (-d / 2) 
+    soft_counts = p * normal_dist
+    total_counts = soft_counts.sum(axis=1).reshape(n,1)
+    posterior = np.divide(soft_counts, total_counts)
+    log_likelihood = np.sum(np.log(total_counts), axis=0)
+
+    return posterior, float(log_likelihood)
 
 
 def mstep(X: np.ndarray, post: np.ndarray) -> GaussianMixture:
@@ -32,7 +43,16 @@ def mstep(X: np.ndarray, post: np.ndarray) -> GaussianMixture:
     Returns:
         GaussianMixture: the new gaussian mixture
     """
-    raise NotImplementedError
+    n = X.shape[0]
+    d = X.shape[1]
+    k = post.shape[1]
+    n_hat = np.sum(post, axis=0)
+    p_hat = n_hat / n
+    mu_hat = (1 / n_hat.reshape(k, 1)) * post.T @ X
+    norm = np.power(np.linalg.norm(X[:, np.newaxis] - mu_hat, axis=2), 2)
+    summation = np.sum(post * norm, axis=0)
+    var_hat = (1 / (n_hat * d)) * summation
+    return GaussianMixture(mu_hat, var_hat, p_hat)
 
 
 def run(X: np.ndarray, mixture: GaussianMixture,
@@ -50,4 +70,11 @@ def run(X: np.ndarray, mixture: GaussianMixture,
             for all components for all examples
         float: log-likelihood of the current assignment
     """
-    raise NotImplementedError
+    prev_likelihood = None
+    likelihood = None
+    while (prev_likelihood is None or likelihood - prev_likelihood >= 1e-6 * np.abs(likelihood)):
+        prev_likelihood = likelihood
+        post, likelihood = estep(X, mixture)
+        mixture = mstep(X, post)
+
+    return mixture, post, likelihood
